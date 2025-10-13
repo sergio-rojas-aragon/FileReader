@@ -1,9 +1,16 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿
 using FileReader.Core.Services;
+using Microsoft.Extensions.Configuration;
 
-Console.WriteLine("Hello, World!");
+// leer la configuracion
 
-string path = "H:\\source\\net\\FileReader\\ExampleProcess";
+var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .Build();
+
+
+string path = config["Processing:Path"];
+
 Console.WriteLine("Ruta a procesar", path);
 
 // crea la aplicacion, evita una instanciacion para poder inyectar dependencias del logger
