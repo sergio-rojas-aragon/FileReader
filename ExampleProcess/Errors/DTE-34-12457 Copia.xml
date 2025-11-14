@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<DTE version="1.0">
+<Documento ID="DTE-33-12455">
+<Encabezado
+<IdDoc>
+<TipoDTE>34</TipoDTE>
+<Folio>12457</Folio>
+<FchEmis>2017-09-08</FchEmis>
+<FchVenc>2017-09-09</FchVenc>
+</IdDoc>
+<Emisor>
+<RUTEmisor>123-1</RUTEmisor>
+<RznSoc>COMPLEMENTOS.</RznSoc>
+<GiroEmis>FABRICA DE ARTICULOS SANITARIOS</GiroEmis>
+<Acteco>252090</Acteco>
+<DirOrigen>CARMEN Nro. 657</DirOrigen>
+<CmnaOrigen>Santiago</CmnaOrigen>
+<CiudadOrigen>SANTIAGO</CiudadOrigen>
+<CdgVendedor>182 VERONICA</CdgVendedor>
+</Emisor>
+<Receptor>
+<RUTRecep>13203-2</RUTRecep>
+<RznSocRecep>LUIS</RznSocRecep>
+<GiroRecep>PARTICULAR</GiroRecep>
+<DirRecep>ISLA SANTA FE</DirRecep>
+<CmnaRecep>CURICO</CmnaRecep>
+<CiudadRecep>CURICO</CiudadRecep>
+</Receptor>
+<Totales>
+<MntNeto>9347</MntNeto>
+<MntExe>0</MntExe>
+<TasaIVA>19</TasaIVA>
+<IVA>1776</IVA>
+<MntTotal>11123</MntTotal>
+</Totales>
+</Encabezado>
+<Detalle>
+<NroLinDet>1</NroLinDet>
+<CdgItem>
+<TpoCodigo>EAN13</TpoCodigo>
+<VlrCodigo>S40045</VlrCodigo>
+</CdgItem>
+<NmbItem>DPS-400 1/4 Gal.Anticorrosico Sintetico</NmbItem>
+<QtyItem>1</QtyItem>
+<PrcItem>3156</PrcItem>
+<MontoItem>3156</MontoItem>
+</Detalle>
+<Detalle>
+<NroLinDet>2</NroLinDet>
+<CdgItem>
+<TpoCodigo>EAN13</TpoCodigo>
+<VlrCodigo>S3704SIN</VlrCodigo>
+</CdgItem>
+<NmbItem>DCS-370 1/4 Gal. Esmalte Negro Opaco</NmbItem>
+<QtyItem>1</QtyItem>
+<PrcItem>3953</PrcItem>
+<MontoItem>3953</MontoItem>
+</Detalle>
+<Detalle>
+<NroLinDet>3</NroLinDet>
+<CdgItem>
+<TpoCodigo>EAN13</TpoCodigo>
+<VlrCodigo>SOLVSINT</VlrCodigo>
+</CdgItem>
+<NmbItem>&gt; DSI-007 1/4 Gal Solvente</NmbItem>
+<QtyItem>1</QtyItem>
+<PrcItem>2238</PrcItem>
+<MontoItem>2238</MontoItem>
+</Detalle>
+</Documento>
+</DTE>
+
