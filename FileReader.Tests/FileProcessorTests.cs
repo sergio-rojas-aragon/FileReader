@@ -1,12 +1,10 @@
 ﻿using FileReader.Core.Interfaces;
-using FileReader.Core.IO;
-using FileReader.Core.Processing;
 using FileReader.Core.Services;
 using Moq;
 
 namespace FileReader.Tests;
 
-public class UnitTest1
+public class FileProcessorTests
 {
     [Fact]
     public void Start_ShouldReturnOk_WhenEverythingWorks()

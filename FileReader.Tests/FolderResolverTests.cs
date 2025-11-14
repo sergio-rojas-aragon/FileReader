@@ -1,14 +1,20 @@
-﻿using FileReader.Core.Interfaces;
-using FileReader.Core.IO;
+﻿using FileReader.Core.Base;
+using FileReader.Core.Interfaces;
+using FileReader.Core.Services;
 using Moq;
 using System.IO.Abstractions.TestingHelpers;
 
 
 namespace FileReader.Tests
 {
-    public class FolderTests
+    public class FolderResolverTests
     {
+        private FolderPaths folderPath;
 
+        public FolderResolverTests()
+        {
+            folderPath = new FolderPaths();
+        }
         //private readonly ITestOutputHelper _output;
 
         //public FolderTests(ITestOutputHelper output)
@@ -22,9 +28,9 @@ namespace FileReader.Tests
         public void CreateAllFolderIfNoExists_ReturnsError_WhenPathDoesNotExist() {
 
 
-            var loggerMock = new Mock<IFileReaderLogger<Folders>>();
+            var loggerMock = new Mock<IFileReaderLogger<FolderResolver>>();
             var fsMock = new MockFileSystem(); // Sistema de archivos en memoria
-            var sut = new Folders(loggerMock.Object, fsMock);
+            var sut = new FolderResolver(loggerMock.Object, fsMock, folderPath);
 
             string rootPath = @"C:\TestRoot"; // NO lo agregamos al mock, así que "no existe"
 
@@ -38,23 +44,23 @@ namespace FileReader.Tests
 
         public void CreateAllFolderIfNoExists_CreateAllSubFolders_WhenPathExist() {
 
-            var loggerMock = new Mock<IFileReaderLogger<Folders>>();
+            var loggerMock = new Mock<IFileReaderLogger<FolderResolver>>();
             var fsMock = new MockFileSystem();
 
             string root = @"C:\Base";
             fsMock.AddDirectory(root);
 
-            var sut = new Folders(loggerMock.Object, fsMock);
+            var sut = new FolderResolver(loggerMock.Object, fsMock, folderPath);
 
             //Act
             var result = sut.CreateAllFolderIfNoExists(root);
 
             //Asserts
             Assert.True(result);
-            Assert.True(fsMock.Directory.Exists(root + "\\" + sut.LogPath));
-            Assert.True(fsMock.Directory.Exists(root + "\\" + sut.ProcessPath));
-            Assert.True(fsMock.Directory.Exists(root + "\\" + sut.ProcessedPath));
-            Assert.True(fsMock.Directory.Exists(root + "\\" + sut.ErrorPath));
+            Assert.True(fsMock.Directory.Exists(root + "\\" + sut.folderPath.LogPath));
+            Assert.True(fsMock.Directory.Exists(root + "\\" + sut.folderPath.ProcessPath));
+            Assert.True(fsMock.Directory.Exists(root + "\\" + sut.folderPath.ProcessedPath));
+            Assert.True(fsMock.Directory.Exists(root + "\\" + sut.folderPath.ErrorPath));
 
         }
     }

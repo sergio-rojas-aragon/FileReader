@@ -1,26 +1,37 @@
 ﻿using FileReader.Core.Base;
 using FileReader.Core.Common;
+using FileReader.Core.DTO;
 using FileReader.Core.Interfaces;
 using System.IO.Abstractions;
 
-namespace FileReader.Core.IO
+namespace FileReader.Core.Services
 {
-    public class Folders : FolderPaths
+    public class FolderResolver : FolderResolverBase
     {
-        private IFileReaderLogger<Folders> _logger;
+        private IFileReaderLogger<FolderResolver> _logger;
         private IFileSystem _fileSystem;
-        private List<(string NombrePath, string Path)> _folders;
+        private DirectoryPathsDTO _dirDTO;
+        private List<(string NombrePath, string Path)>? _folders;
 
-        public Folders(IFileReaderLogger<Folders> logger, IFileSystem fileSystem) {
+        public FolderResolver(IFileReaderLogger<FolderResolver> logger, 
+            IFileSystem fileSystem, 
+            IFolderPath folderPath,
+            DirectoryPathsDTO dirDTO
+            ) 
+            : base(folderPath)
+        {
 
             _logger = logger;
             _fileSystem = fileSystem;
+            _dirDTO = dirDTO;
 
         }
 
-        public bool CreateAllFolderIfNoExists(string path) {
+
+        public override bool CreateAllFolderIfNoExists(string path) {
 
             SetDirectoryPaths(path);
+            
             
             // validar si la ruta principal existe
             _logger.LogInformation("Inicio Creacion Folder");
@@ -42,23 +53,27 @@ namespace FileReader.Core.IO
             return true;        
         }
 
-        private void SetDirectoryPaths(string path)
+        protected override void SetDirectoryPaths(string path)
         {
             _logger.LogInformation("SetDirectoryPaths");
-            
+
+            _dirDTO.LogPath = path + "\\" + folderPath.LogPath;
+            _dirDTO.ProcessPath = path + "\\" + folderPath.ProcessPath;
+            _dirDTO.ProcessedPath = path + "\\" + folderPath.ProcessedPath;
+            _dirDTO.ErrorPath = path + "\\" + folderPath.ErrorPath;
+
 
             _folders = new List<(string NombrePath, string Path)> {
 
-                (nameof(LogPath), path + "\\" + LogPath),
-                (nameof(ProcessPath), path + "\\" + ProcessPath),
-                (nameof(ProcessedPath), path + "\\" + ProcessedPath),
-                (nameof(ErrorPath), path + "\\" + ErrorPath)
+                (nameof(folderPath.LogPath), _dirDTO.LogPath),
+                (nameof(folderPath.ProcessPath), _dirDTO.ProcessPath),
+                (nameof(folderPath.ProcessedPath), _dirDTO.ProcessedPath),
+                (nameof(folderPath.ErrorPath), _dirDTO.ErrorPath)
             };
-
 
         }
 
-        private void tryCreateDirectory(string path){
+        protected override void tryCreateDirectory(string path){
 
             try
             {

@@ -1,5 +1,4 @@
-﻿
-using FileReader.Core.Processing;
+﻿using FileReader.Core.Services;
 using Microsoft.Extensions.Configuration;
 
 // leer la configuracion

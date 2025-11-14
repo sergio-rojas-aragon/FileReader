@@ -1,12 +1,14 @@
 ﻿
+using FileReader.Core.Interfaces;
+
 namespace FileReader.Core.Base
 {
-    public class FolderPaths
+    public class FolderPaths : IFolderPath
     {
-        public string LogPath { get; internal set; } = "Logs";
-        public string ProcessPath { get; internal set; } = "Process";
-        public string ProcessedPath { get; internal set; } = "Processed";
-        public string ErrorPath { get; internal set; } = "Errors";
+        public string LogPath { get; init; } = "Logs";
+        public string ProcessPath { get; init; } = "Process";
+        public string ProcessedPath { get; init; } = "Processed";
+        public string ErrorPath { get; init; } = "Errors";
 
     }
 }

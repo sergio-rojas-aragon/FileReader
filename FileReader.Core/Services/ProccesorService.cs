@@ -1,41 +1,36 @@
 ﻿using FileReader.Core.Common;
 using FileReader.Core.DTO;
 using FileReader.Core.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using FileReader.Core.Models;
 using System.Xml;
 
 namespace FileReader.Core.Services
 {
-    public class ReadService
+    public class ProccesorService
     {
-        private IFileReaderLogger<ReadService> _logger;
+        private IFileReaderLogger<ProccesorService> _logger;
 
-        public ReadService(IFileReaderLogger<ReadService> logger) { 
+        public ProccesorService(IFileReaderLogger<ProccesorService> logger) { 
         
             _logger = logger;
         }
 
 
-        public Result LeeXML(FileInfoDTO fileInfo)
+        public Result Read(string contentFile, FileInfoDTO processFile, FileTypes fileTypes)
         {
 
+            //Parte del XML
             var xmlDoc = new XmlDocument();
-
-
             try
             {
-                xmlDoc.Load(fileInfo.fileFullPath);
+                xmlDoc.Load(processFile.fileFullPath);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "error al leer XML {fileInfo.fileName}", fileInfo.fileName);
+                _logger.LogError(ex, "error al leer XML {fileInfo.fileName}", processFile.fileName);
                 return new Result { estado = false, mensaje = "error al leer XML" };
             }
+
 
             // solo validare algunos datos para el ejercicio
             foreach (XmlNode node in xmlDoc.SelectNodes("/DTE"))
@@ -55,7 +50,7 @@ namespace FileReader.Core.Services
                 catch (Exception ex)
                 {
 
-                    _logger.LogError(ex, "error al leer data {fileInfo.fileName}", fileInfo.fileName);
+                    _logger.LogError(ex, "error al leer data {fileInfo.fileName}", processFile.fileName);
                     return new Result { estado = false, mensaje = "error al leer data" };
                 }
 
@@ -63,10 +58,10 @@ namespace FileReader.Core.Services
 
             }
 
-
-
             return new Result {  estado = true, mensaje = "" };
 
         }
+
+
     }
 }
