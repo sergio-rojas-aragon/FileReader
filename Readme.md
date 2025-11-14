@@ -13,11 +13,8 @@ Es una libreria aislada, es decir, solo se puede ejecutar a traves de una funcio
 
 
 Aplica una validacion simple a un archivo XML
-Extendido para un archivo X
 
 Lo deje de esta manera para que se pueda extender y reutilizar.
-
-
 
 Aplica una validacion simple a un XML, dependiendo de los escenarios, es en que carpeta va a dejar el archivo.
 
