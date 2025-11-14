@@ -13,7 +13,8 @@ namespace FileReader.Core.Services
         private DirectoryPathsDTO _dirDTO;
         private List<(string NombrePath, string Path)>? _folders;
 
-        public FolderResolver(IFileReaderLogger<FolderResolver> logger, 
+        public FolderResolver(
+            IFileReaderLogger<FolderResolver> logger, 
             IFileSystem fileSystem, 
             IFolderPath folderPath,
             DirectoryPathsDTO dirDTO

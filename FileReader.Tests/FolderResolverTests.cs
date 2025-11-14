@@ -1,4 +1,5 @@
 ﻿using FileReader.Core.Base;
+using FileReader.Core.DTO;
 using FileReader.Core.Interfaces;
 using FileReader.Core.Services;
 using Moq;
@@ -10,10 +11,12 @@ namespace FileReader.Tests
     public class FolderResolverTests
     {
         private FolderPaths folderPath;
+        private DirectoryPathsDTO dto;
 
         public FolderResolverTests()
         {
             folderPath = new FolderPaths();
+            dto = new DirectoryPathsDTO();
         }
         //private readonly ITestOutputHelper _output;
 
@@ -30,7 +33,9 @@ namespace FileReader.Tests
 
             var loggerMock = new Mock<IFileReaderLogger<FolderResolver>>();
             var fsMock = new MockFileSystem(); // Sistema de archivos en memoria
-            var sut = new FolderResolver(loggerMock.Object, fsMock, folderPath);
+
+
+            var sut = new FolderResolver(loggerMock.Object, fsMock, folderPath, dto);
 
             string rootPath = @"C:\TestRoot"; // NO lo agregamos al mock, así que "no existe"
 
@@ -50,7 +55,7 @@ namespace FileReader.Tests
             string root = @"C:\Base";
             fsMock.AddDirectory(root);
 
-            var sut = new FolderResolver(loggerMock.Object, fsMock, folderPath);
+            var sut = new FolderResolver(loggerMock.Object, fsMock, folderPath, dto);
 
             //Act
             var result = sut.CreateAllFolderIfNoExists(root);

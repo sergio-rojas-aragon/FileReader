@@ -1,39 +1,138 @@
-﻿using FileReader.Core.Interfaces;
+﻿using FileReader.Core.Base;
+using FileReader.Core.DTO;
+using FileReader.Core.Interfaces;
 using FileReader.Core.Services;
 using Moq;
+using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FileReader.Tests;
 
 public class FileProcessorTests
 {
-    [Fact]
-    public void Start_ShouldReturnOk_WhenEverythingWorks()
+    private Mock<IFileReaderLogger<FileProccesor>> loggerMock;
+    private MockFileSystem fsMock;
+    private string rootPath;
+    private string ProcessedPath;
+    private string ErrorsPath;
+
+    public FileProcessorTests()
     {
-        // 1️⃣ Crear mocks (simulaciones)
-        //var mockLogger = new Mock<IFileReaderLogger<FileReaderOrchestrator>>();
-        //var mockFolderService = new Mock<Folders>();
-        //var mockProcessFileService = new Mock<ProcessFileServices>();
+        loggerMock = new Mock<IFileReaderLogger<FileProccesor>>();
 
-        //// 2️⃣ Decirle a los mocks cómo comportarse
-        //mockFolderService
-        //    .Setup(x => x.CreateAllFolderIfNoExists(It.IsAny<string>()))
-        //    .Returns((estado: true, mensaje: "ok"));
+        // Sistema de archivos en memoria
+        fsMock = new MockFileSystem();
+        rootPath = @"C:\TestRoot";
 
-        //mockProcessFileService
-        //    .Setup(x => x.ReadAndProcessFolder(It.IsAny<string>()))
-        //    .Returns("Listo");
+        //Pre cargo carpetas
+        ProcessedPath = @"C:\TestRoot\Processed";
+        ErrorsPath = @"C:\TestRoot\Errors";
 
-        //// 3️⃣ Crear la clase con los mocks
-        //var orchestrator = new FileReaderOrchestrator(
-        //    mockLogger.Object,
-        //    mockFolderService.Object,
-        //    mockProcessFileService.Object
-        //);
+        fsMock.AddDirectory(ProcessedPath);
+        fsMock.AddDirectory(ErrorsPath);
+        
 
-        //// 4️⃣ Llamar al método
-        //var result = orchestrator.start("C:\\RutaDePrueba");
+    }
 
-        //// 5️⃣ Verificar que el resultado sea el esperado
-    //    Assert.Equal("OK", result);
+    [Fact]
+    public void GetFiles_shouldReturnListXMLFiles()
+    {
+
+        // Arrange
+        var dto = new DirectoryPathsDTO();
+ 
+
+        fsMock.AddFile(@"c:\TestRoot\archivo.xml", new MockFileData("contenido del archivo"));
+        fsMock.AddFile(@"c:\TestRoot\archivo2.xml", new MockFileData("contenido del archivo"));
+
+        var sut = new FileProccesor(loggerMock.Object, fsMock, dto);
+
+        var files = sut.GetFiles(rootPath, Core.Models.FileTypes.xml);
+
+        //Asserts
+        Assert.NotEmpty(files);
+        Assert.Equal(2, files.Count());
+        Assert.Contains("archivo.xml", files.First());
+
+    }
+
+    [Fact]
+    public void GetFileInfo_ShouldReturnDetailsFromFile() {
+
+        string rootPath = @"C:\TestRoot";
+        fsMock.AddFile(@"c:\TestRoot\archivo.xml", new MockFileData("contenido del archivo"));
+        var dto = new DirectoryPathsDTO();
+
+        var sut = new FileProccesor(loggerMock.Object, fsMock, dto);
+
+        var fileInfo = sut.GetFileInfo(@"c:\TestRoot\archivo.xml");
+
+        //Asserts
+
+        Assert.Equal("c:\\TestRoot\\archivo.xml", fileInfo.fileFullPath);
+        Assert.Equal(".xml", fileInfo.FileExtension);
+
+
+    }
+
+    [Fact]
+    public void GetFileInfo_ShouldReturnException() {
+
+        string rootPath = @"C:\TestRoot";
+        var dto = new DirectoryPathsDTO();
+
+        var sut = new FileProccesor(loggerMock.Object, fsMock, dto);
+
+        
+        //var fileInfo = sut.GetFileInfo("");
+
+        //Asserts
+        var exception = Assert.Throws<ArgumentException>(() => sut.GetFileInfo(string.Empty));
+        Assert.Contains("La ruta no puede ser vacia o nula", exception.Message);
+    }
+
+    [Fact]
+    public void MoveFile_ShouldMoveFileToProcessedIfStatusTrue()
+    {
+
+        var dto = new DirectoryPathsDTO();
+        dto.ProcessedPath = ProcessedPath;
+
+        var sut = new FileProccesor(loggerMock.Object, fsMock, dto);
+
+        fsMock.AddFile(@"c:\TestRoot\archivo.xml", new MockFileData("contenido del archivo"));
+        var fileInfo = sut.GetFileInfo(@"c:\TestRoot\archivo.xml");
+        bool status = true;
+
+        sut.MoveFile(fileInfo, status);
+
+        //Asserts
+        Assert.True(fsMock.FileExists(ProcessedPath + @"\archivo.xml"));
+        Assert.False(fsMock.FileExists(@"c:\TestRoot\archivo.xml"));
+        Assert.False(fsMock.FileExists(ErrorsPath + @"\archivo.xml"));
+    }
+
+    [Fact]
+    public void MoveFile_ShouldMoveFileToErrorsIfStatusFalse()
+    {
+
+        var dto = new DirectoryPathsDTO();
+        dto.ProcessedPath = ProcessedPath;
+        dto.ErrorPath = ErrorsPath;
+
+        var sut = new FileProccesor(loggerMock.Object, fsMock, dto);
+
+        fsMock.AddFile(@"c:\TestRoot\archivo.xml", new MockFileData("contenido del archivo"));
+        var fileInfo = sut.GetFileInfo(@"c:\TestRoot\archivo.xml");
+        bool status = false;
+
+        sut.MoveFile(fileInfo, status);
+
+        //Asserts
+        Assert.False(fsMock.FileExists(ProcessedPath + @"\archivo.xml"));
+        Assert.False(fsMock.FileExists(@"c:\TestRoot\archivo.xml"));
+        Assert.True(fsMock.FileExists(ErrorsPath + @"\archivo.xml"));
     }
 }
+

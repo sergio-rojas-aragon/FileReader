@@ -1,15 +1,15 @@
 ﻿using FileReader.Core.DTO;
 using FileReader.Core.Interfaces;
 using FileReader.Core.Models;
+using System.IO.Abstractions;
 
 
 namespace FileReader.Core.Services
 {
     public class FileProccesor
     {
+        private IFileSystem _fileSystem;
         private IFileReaderLogger<FileProccesor> _logger;
-        private FolderResolver _folderServ;
-        private ProccesorService _readServ;
         private DirectoryPathsDTO _dirDTO;
         private string _path;
 
@@ -18,14 +18,12 @@ namespace FileReader.Core.Services
 
         public FileProccesor(
                 IFileReaderLogger<FileProccesor> logger, 
-                FolderResolver folderService, 
-                ProccesorService readServ,
+                IFileSystem fileSystem, 
                 DirectoryPathsDTO dirDTO
             )
         {
+            _fileSystem = fileSystem;
             _logger = logger;
-            _folderServ = folderService;
-            _readServ = readServ;
             _dirDTO = dirDTO;
         }
 
@@ -39,7 +37,7 @@ namespace FileReader.Core.Services
             {
 
                 // lo optimizo
-                string[] pathFiles = Directory.GetFiles(path, "*.xml", SearchOption.TopDirectoryOnly);
+                string[] pathFiles = _fileSystem.Directory.GetFiles(path, "*.xml", SearchOption.TopDirectoryOnly);
                 _logger.LogInformation("Se encontraron " + pathFiles.Length + " archivos");
 
                 
@@ -53,9 +51,6 @@ namespace FileReader.Core.Services
             }
             catch (Exception ex)
             {
-
-                //_logger.LogError(ex, "error en leer carpeta", path);
-                //return false;
                 throw new FileLoadException("error al leer la carpeta", ex);
             }
 
@@ -83,23 +78,39 @@ namespace FileReader.Core.Services
             return text;
         }
 
-        public FileInfoDTO GetFileInfo(string archivo)
+        public FileInfoDTO GetFileInfo(string PathWithFile)
         {
-            FileInfoDTO file = new FileInfoDTO();
-            file.fileName = Path.GetFileNameWithoutExtension(archivo);
-            file.FileExtension = Path.GetExtension(archivo);
-            file.fileDirectory = Path.GetDirectoryName(archivo);
-            file.fileFullPath = archivo;
+            if (string.IsNullOrEmpty(PathWithFile))
+            {
+                throw new ArgumentException("La ruta no puede ser vacia o nula");
+            }
 
-            return file;
+            try
+            {
+                FileInfoDTO file = new FileInfoDTO();
+                file.fileName = Path.GetFileNameWithoutExtension(PathWithFile);
+                file.FileExtension = Path.GetExtension(PathWithFile);
+                file.fileDirectory = Path.GetDirectoryName(PathWithFile);
+                file.fileFullPath = PathWithFile;
+                return file;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+
+            }
+
+
+            
         }
 
         private FileInfoDTO MoveFile(FileInfoDTO fileInfo, string PathDestination)
         {
 
-           
-            File.Move(fileInfo.fileFullPath, PathDestination + "\\" + fileInfo.fileName + fileInfo.FileExtension);
-            fileInfo = GetFileInfo(PathDestination + "\\" + fileInfo.fileName + fileInfo.FileExtension);
+            string fileDestination = PathDestination + "\\" + fileInfo.fileName + fileInfo.FileExtension;
+            _fileSystem.File.Move(fileInfo.fileFullPath, fileDestination);
+            fileInfo = GetFileInfo(fileDestination);
             
       
             return fileInfo;

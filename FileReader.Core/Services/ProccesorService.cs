@@ -1,12 +1,11 @@
-﻿using FileReader.Core.Common;
-using FileReader.Core.DTO;
+﻿using FileReader.Core.DTO;
 using FileReader.Core.Interfaces;
 using FileReader.Core.Models;
 using System.Xml;
 
 namespace FileReader.Core.Services
 {
-    public class ProccesorService
+    public class ProccesorService: IProccesorService
     {
         private IFileReaderLogger<ProccesorService> _logger;
 
