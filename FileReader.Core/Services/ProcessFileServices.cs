@@ -1,5 +1,6 @@
 ﻿using FileReader.Core.DTO;
 using FileReader.Core.Interfaces;
+using FileReader.Core.IO;
 
 
 namespace FileReader.Core.Services
@@ -7,11 +8,11 @@ namespace FileReader.Core.Services
     public class ProcessFileServices
     {
         private IFileReaderLogger<ProcessFileServices> _logger;
-        private FolderServices _folderServ;
+        private Folders _folderServ;
         private ReadService _readServ;
         private string _path;
 
-        public ProcessFileServices(IFileReaderLogger<ProcessFileServices> logger, FolderServices folderService, ReadService readServ)
+        public ProcessFileServices(IFileReaderLogger<ProcessFileServices> logger, Folders folderService, ReadService readServ)
         {
             _logger = logger;
             _folderServ = folderService;

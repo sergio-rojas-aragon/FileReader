@@ -1,5 +1,5 @@
 ﻿
-using FileReader.Core.Services;
+using FileReader.Core.Processing;
 using Microsoft.Extensions.Configuration;
 
 // leer la configuracion
@@ -16,6 +16,6 @@ Console.WriteLine("Ruta a procesar", path);
 // crea la aplicacion, evita una instanciacion para poder inyectar dependencias del logger
 var reader = FileReaderOrchestrator.Init();
 
-var a = reader.start(path);
+var a = reader.Execute(path, FileReader.Core.Models.FileTypes.xml);
 
 Console.WriteLine(a.ToString());
